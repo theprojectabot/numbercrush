@@ -50,6 +50,11 @@ public:
 private:
 	Random random;
        
+	void playSfx(const AssetAudio& sfx) {
+		static int i=0;
+		AudioChannel(i).play(sfx);
+		i = 1 - i;
+	}
 
     void onConnect(unsigned id)
     {
@@ -106,6 +111,8 @@ private:
 
 	void onTouch(unsigned id)
     {
+		playSfx(SfxBomb);
+	
 		CubeID cube(id);
 
 		LOG("Touch event on cube #%d, state=%d\n", id, cube.isTouching());
@@ -122,6 +129,8 @@ private:
                 drawCard(id);
 		displayScore(id);
 
+		
+	
     }
 
     void onAccelChange(unsigned id)
@@ -207,8 +216,6 @@ private:
        
     }
 };
-
-
 
 void main()
 {
