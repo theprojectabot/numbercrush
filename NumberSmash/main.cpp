@@ -90,8 +90,8 @@ private:
 		if(id != 0)
 			str << "score: " << counters[id].score << "\n";
 
-       // vid[cube].bg1.text(vec(4,2), Font, str);
-       
+        //vid[cube].bg0_rom.text(vec(2,2), Font3, str, '!');
+       vid[cube].bg1.text(vec(12,0),Font, str);
        // vid.sprites[0].setImage(CardOne, frame);
 	}
 
