@@ -1,4 +1,12 @@
 APP = NumberSmash
+SDK_DIR = /Users/benb/Dropbox/Programming/sifteo
+
+
+STIR = $(SDK_DIR)/bin/stir
+LD = $(SDK_DIR)/bin/slinky
+CC = $(SDK_DIR)/bin/arm-clang
+
+BIN = /Users/benb/Desktop/$(APP).elf
 
 include $(SDK_DIR)/Makefile.defs
 

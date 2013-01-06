@@ -1,0 +1,7 @@
+Makefile
+assets.gen.d
+assets.gen.h
+assets.gen.o
+nbproject
+main.o
+main.d
