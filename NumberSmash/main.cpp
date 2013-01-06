@@ -12,6 +12,9 @@ static Metadata M = Metadata()
     .icon(Icon)
     .cubeRange(0, CUBE_ALLOCATION);
 
+static AssetSlot MainSlot = AssetSlot::allocate()
+    .bootstrap(GameAssets);
+
 static VideoBuffer vid[CUBE_ALLOCATION];
 static TiltShakeRecognizer motion[CUBE_ALLOCATION];
 
@@ -26,7 +29,7 @@ public:
 
     void setup()
     {
-		Events::neighborAdd.set(&NumberSmash::onNeighborAdd, this);
+	Events::neighborAdd.set(&NumberSmash::onNeighborAdd, this);
         Events::neighborRemove.set(&NumberSmash::onNeighborRemove, this);
         Events::cubeAccelChange.set(&NumberSmash::onAccelChange, this);
         Events::cubeTouch.set(&NumberSmash::onTouch, this);
@@ -51,8 +54,9 @@ private:
 
         bzero(counters[id]);
         LOG("Piece %d connected\n", id);
-
-        vid[id].initMode(BG0_ROM);
+        
+       // vid[id].initMode(BG0_ROM);
+        vid[id].initMode(BG0_BG1);
         vid[id].attach(id);
         motion[id].attach(id);
 
@@ -65,8 +69,8 @@ private:
 	        str << "Player #" << cube << "\n";
 
 		counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
-
-        vid[cube].bg0rom.text(vec(1,2), str);
+        vid[cube].bg0.image(vec(0,0), Background);
+        //vid[cube].bg0rom.text(vec(1,2), str);
 
         onAccelChange(cube);
         onTouch(cube);
@@ -81,7 +85,7 @@ private:
 		if(id != 0)
 			str << "score: " << counters[id].score << "\n";
 
-        vid[cube].bg0rom.text(vec(1,10), str);
+        vid[cube].bg1.text(vec(1,10), Font, str);
 	}
 
 	void displayNumber(unsigned id)
@@ -89,7 +93,7 @@ private:
         CubeID cube(id);
 		String<32> str;
 		str << "number: " << counters[id].currentNumber << "\n";
-        vid[cube].bg0rom.text(vec(1,9), str);
+        vid[cube].bg1.text(vec(1,9), Font, str);
 
 	}
 
