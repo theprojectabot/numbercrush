@@ -18,6 +18,10 @@ static AssetSlot MainSlot = AssetSlot::allocate()
 static VideoBuffer vid[CUBE_ALLOCATION];
 static TiltShakeRecognizer motion[CUBE_ALLOCATION];
 
+AssetImage Backgrounds[6] = {
+    BGGreen, BGBlue, BGRed, BGPink, BGLightBlue, BGPurple
+};
+ 
 class NumberSmash {
 public:
     struct Counter {
@@ -29,6 +33,7 @@ public:
     } counters[CUBE_ALLOCATION];
 
      int frame;
+     int counterColorSwitch;
      
     void setup()
     {
@@ -38,6 +43,7 @@ public:
         Events::cubeTouch.set(&NumberSmash::onTouch, this);
         Events::cubeConnect.set(&NumberSmash::onConnect, this);
 
+        counterColorSwitch = 0;
         // Handle already-connected cubes
         for (CubeID cube : CubeSet::connected())
             onConnect(cube);
@@ -53,6 +59,12 @@ public:
         vid[cube].bg1.image(vec(4,4), Card, counters[id].currentNumber);
        
     }
+    
+    void switchColorBack()
+        {
+           vid[0].bg0.image(vec(0,0), Backgrounds[0]);   
+           counterColorSwitch = 0;
+        }
 
 private:
 	Random random;
@@ -84,7 +96,7 @@ private:
 	        str << "Player #" << cube << "\n";
 
 		counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
-        vid[cube].bg0.image(vec(0,0), Background);
+        vid[cube].bg0.image(vec(0,0), Backgrounds[id]);
         // Allocate 16x2 tiles on BG1 for text at the bottom of the screen
         auto mask = BG1Mask::filled(vec(2,2), vec(12,12));
         mask = mask | BG1Mask::filled(vec(2,2), vec(12,12));
@@ -95,7 +107,9 @@ private:
         onAccelChange(cube);
         onTouch(cube);
         changeCard(cube);
-        
+
+        playSfx(SfxGameStart);
+	        
     }
 
 	void displayScore(unsigned id)
@@ -123,8 +137,8 @@ private:
         
         void changeCard(unsigned id)
         {
-                counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
-
+                //counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
+                counters[id].currentNumber =counters[0].currentNumber;
 		displayNumber(id);
 
         //str << "touch: " << cube.isTouching() << "\n";
@@ -133,13 +147,25 @@ private:
             
             
         }
+        void switchColorFast(unsigned id)
+        {
+            
+            vid[0].bg0.image(vec(0,0), Backgrounds[id]);
+            
+            counterColorSwitch = 15;
+           
+
+        }
+        
+        
+        
         
 
 	void onTouch(unsigned id)
     {
 		CubeID cube(id);
-		/*
-                playSfx(SfxBomb);
+		///*
+                //playSfx(SfxBomb);
 	
 
 		LOG("Touch event on cube #%d, state=%d\n", id, cube.isTouching());
@@ -152,12 +178,12 @@ private:
                 }
 			
 
-*/
+
 
 		//displayNumber(id);
 
-        //str << "touch: " << cube.isTouching() << "\n";
-                drawCard(id);
+                //str << "touch: " << cube.isTouching() << "\n";
+                changeCard(id);
 		displayScore(id);
 
 		
@@ -224,10 +250,13 @@ private:
 		if(counters[player].currentNumber == counters[0].currentNumber) {
 			LOG("Player %d just scored\n", player);
 			counters[player].score++;
+                        playSfx(SfxCardMatch);
 
 			newRound();
 
 			displayScore(player);
+                        switchColorFast(player);
+                        
 		}
 		else {
 			LOG("Player %d did not score\n", player);
@@ -242,15 +271,19 @@ private:
 
 		counters[0].neighborAdd++;
     }
-
+    
+    
     
 };
+
 
 void main()
 {
     static NumberSmash numberSmash;
 
     numberSmash.setup();
+
+    TimeStep ts;
 
     while (1){
         System::paint();
@@ -262,6 +295,11 @@ void main()
         //{
          //   numberSmash.frame = 0;
        // }
+        if(numberSmash.counterColorSwitch < 1)
+            numberSmash.switchColorBack();
+        
+        if(numberSmash.counterColorSwitch > 0 )
+            numberSmash.counterColorSwitch--;
         
     }
 }
