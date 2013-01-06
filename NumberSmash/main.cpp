@@ -70,6 +70,7 @@ private:
 
         onAccelChange(cube);
         onTouch(cube);
+        
     }
 
 	void displayScore(unsigned id)
@@ -189,6 +190,13 @@ private:
     }
 
 };
+
+void drawCard()
+{
+    
+    
+    
+}
 
 void main()
 {
