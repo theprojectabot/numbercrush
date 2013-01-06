@@ -2,6 +2,7 @@ Makefile
 assets.gen.d
 assets.gen.h
 assets.gen.o
+assets.gen.cpp
 nbproject
 main.o
 
