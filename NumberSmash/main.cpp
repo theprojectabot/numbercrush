@@ -46,6 +46,12 @@ public:
 		random = Random::Random();
 
 	}
+    void drawCard(unsigned id)
+    {
+        CubeID cube(id);
+        vid[cube].bg1.image(vec(4,4), Card, frame);
+       
+    }
 
 private:
 	Random random;
@@ -79,8 +85,11 @@ private:
 		counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
         vid[cube].bg0.image(vec(0,0), Background);
         // Allocate 16x2 tiles on BG1 for text at the bottom of the screen
-        vid[cube].bg1.setMask(BG1Mask::filled(vec(2,2), vec(12,12)));
+        auto mask = BG1Mask::filled(vec(2,2), vec(12,12));
+        mask = mask | BG1Mask::filled(vec(2,2), vec(12,12));
+        vid[cube].bg1.setMask(mask);
         //vid[cube].bg0rom.text(vec(1,2), str);
+        vid[cube].bg1.fill(TTile);
 
         onAccelChange(cube);
         onTouch(cube);
@@ -96,17 +105,18 @@ private:
 			str << "score: " << counters[id].score << "\n";
 
         //vid[cube].bg0_rom.text(vec(2,2), Font3, str, '!');
-       vid[cube].bg1.text(vec(12,0),Font, str);
+       vid[cube].bg1.text(vec(2,2),Font, str);
        // vid.sprites[0].setImage(CardOne, frame);
 	}
 
 	void displayNumber(unsigned id)
 	{
         CubeID cube(id);
-		String<32> str;
-		str << "number: " << counters[id].currentNumber << "\n";
-       // vid[cube].bg1.text(vec(1,9), Font, str);
-
+		//String<32> str;
+		//str << "number: " << counters[id].currentNumber << "\n";
+                frame = counters[id].currentNumber;
+                //vid[cube].bg1.text(vec(2,12), Font, str);
+                drawCard(id);
 	}
 
 	void onTouch(unsigned id)
@@ -209,12 +219,7 @@ private:
 		counters[0].neighborAdd++;
     }
 
-    void drawCard(unsigned id)
-    {
-        CubeID cube(id);
-        vid[cube].bg1.image(vec(2,2), Card, 0);
-       
-    }
+    
 };
 
 void main()
@@ -225,12 +230,14 @@ void main()
 
     while (1){
         System::paint();
-        /*
-        numberSmash.frame++;
-        if(numberSmash.frame == 2048)
-        {
-            numberSmash.frame = 0;
-        }
-         * */
+        //for (CubeID cube : CubeSet::connected())
+             //   numberSmash.drawCard(cube);
+        
+       // numberSmash.frame++;
+        //if(numberSmash.frame == 9)
+        //{
+         //   numberSmash.frame = 0;
+       // }
+        
     }
 }

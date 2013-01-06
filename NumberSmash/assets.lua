@@ -5,7 +5,9 @@ Icon = image{"icon.png"}
 
 GameAssets = group{}
 Background = image{"bg0.PNG", quality = 9.99}
-Font = image{"font-8x16.png", pinned=true, width=8, height=16}
+TTile = image{"transparent_tile.png", pinned=true, quality = 10}
+--Font = image{"font-8x16.png", pinned=true, width=8, height=16}
+Font = image{"font-8x16c.png", pinned=true, width=8, height=16}
 CardOne = image{"card1.PNG",pinned=true, width=128,height=128}
 Font2 = image{"CharcolTest.png",pinned=true, width=16, height=16}
 Font3 = image{"arieltest.png", pinned=true, width=16, height =32}
