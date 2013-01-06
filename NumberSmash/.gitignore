@@ -5,6 +5,7 @@ assets.gen.o
 assets.gen.cpp
 nbproject
 main.o
-
+NumberSmash.elf
 main.d
 .DS_Store
+
