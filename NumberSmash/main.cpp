@@ -25,6 +25,7 @@ public:
         unsigned neighborRemove;
 		unsigned score;
 		unsigned currentNumber;
+                bool touchOccured;
     } counters[CUBE_ALLOCATION];
 
      int frame;
@@ -49,7 +50,7 @@ public:
     void drawCard(unsigned id)
     {
         CubeID cube(id);
-        vid[cube].bg1.image(vec(4,4), Card, frame);
+        vid[cube].bg1.image(vec(4,4), Card, counters[id].currentNumber);
        
     }
 
@@ -93,6 +94,7 @@ private:
 
         onAccelChange(cube);
         onTouch(cube);
+        changeCard(cube);
         
     }
 
@@ -111,29 +113,48 @@ private:
 
 	void displayNumber(unsigned id)
 	{
-        CubeID cube(id);
-		//String<32> str;
-		//str << "number: " << counters[id].currentNumber << "\n";
+                CubeID cube(id);
+		String<32> str;
+		str << "number: " << counters[id].currentNumber << "\n";
                 frame = counters[id].currentNumber;
-                //vid[cube].bg1.text(vec(2,12), Font, str);
+                vid[cube].bg1.text(vec(2,12), Font, str);
                 drawCard(id);
 	}
+        
+        void changeCard(unsigned id)
+        {
+                counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
+
+		displayNumber(id);
+
+        //str << "touch: " << cube.isTouching() << "\n";
+                drawCard(id);
+		displayScore(id);
+            
+            
+        }
+        
 
 	void onTouch(unsigned id)
     {
-		playSfx(SfxBomb);
-	
 		CubeID cube(id);
+		/*
+                playSfx(SfxBomb);
+	
 
 		LOG("Touch event on cube #%d, state=%d\n", id, cube.isTouching());
-		
+		//counters[id].touchOccured = true;
 
 		if(!cube.isTouching())
-			counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
+                {
+                    counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
+                  //  counters[id].touchOccured = false;
+                }
+			
 
+*/
 
-
-		displayNumber(id);
+		//displayNumber(id);
 
         //str << "touch: " << cube.isTouching() << "\n";
                 drawCard(id);
@@ -154,7 +175,10 @@ private:
 			if(id == 0)
 				LOG("Reset Game\n");
 			else
+                        {
 				LOG("player %d shook\n", id);
+                                changeCard(id);
+                        }
         }
 
         //vid[cube].bg0rom.text(vec(1,10), str);
