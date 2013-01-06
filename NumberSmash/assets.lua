@@ -9,5 +9,6 @@ Font = image{"font-8x16.png", pinned=true, width=8, height=16}
 CardOne = image{"card1.PNG",pinned=true, width=128,height=128}
 Font2 = image{"CharcolTest.png",pinned=true, width=16, height=16}
 Font3 = image{"arieltest.png", pinned=true, width=16, height =32}
+Card = image{"cards/out.png", pinned=true, width=64, height = 64}
 
 SfxBomb = sound{ "sounds/bomb.raw" }

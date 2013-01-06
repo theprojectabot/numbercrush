@@ -212,7 +212,7 @@ private:
     void drawCard(unsigned id)
     {
         CubeID cube(id);
-        vid[cube].bg1.image(vec(0,0), CardOne, 0);
+        vid[cube].bg1.image(vec(2,2), Card, 0);
        
     }
 };
