@@ -27,6 +27,8 @@ public:
 		unsigned currentNumber;
     } counters[CUBE_ALLOCATION];
 
+     int frame;
+     
     void setup()
     {
 	Events::neighborAdd.set(&NumberSmash::onNeighborAdd, this);
@@ -47,6 +49,7 @@ public:
 
 private:
 	Random random;
+       
 
     void onConnect(unsigned id)
     {
@@ -71,7 +74,7 @@ private:
 		counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
         vid[cube].bg0.image(vec(0,0), Background);
         // Allocate 16x2 tiles on BG1 for text at the bottom of the screen
-        vid[cube].bg1.setMask(BG1Mask::filled(vec(0,2), vec(8,14)));
+        vid[cube].bg1.setMask(BG1Mask::filled(vec(2,2), vec(12,12)));
         //vid[cube].bg0rom.text(vec(1,2), str);
 
         onAccelChange(cube);
@@ -88,7 +91,8 @@ private:
 			str << "score: " << counters[id].score << "\n";
 
        // vid[cube].bg1.text(vec(4,2), Font, str);
-        vid[cube].bg1.image(vec(2,2), CardOne, 0);
+       
+       // vid.sprites[0].setImage(CardOne, frame);
 	}
 
 	void displayNumber(unsigned id)
@@ -96,7 +100,7 @@ private:
         CubeID cube(id);
 		String<32> str;
 		str << "number: " << counters[id].currentNumber << "\n";
-        vid[cube].bg1.text(vec(1,9), Font, str);
+       // vid[cube].bg1.text(vec(1,9), Font, str);
 
 	}
 
@@ -115,7 +119,7 @@ private:
 		displayNumber(id);
 
         //str << "touch: " << cube.isTouching() << "\n";
-
+                drawCard(id);
 		displayScore(id);
 
     }
@@ -196,14 +200,15 @@ private:
 		counters[0].neighborAdd++;
     }
 
+    void drawCard(unsigned id)
+    {
+        CubeID cube(id);
+        vid[cube].bg1.image(vec(0,0), CardOne, 0);
+       
+    }
 };
 
-void drawCard()
-{
-    
-    
-    
-}
+
 
 void main()
 {
@@ -211,6 +216,14 @@ void main()
 
     numberSmash.setup();
 
-    while (1)
+    while (1){
         System::paint();
+        /*
+        numberSmash.frame++;
+        if(numberSmash.frame == 2048)
+        {
+            numberSmash.frame = 0;
+        }
+         * */
+    }
 }
