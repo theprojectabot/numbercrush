@@ -27,6 +27,7 @@ SfxDice = sound{ "sounds/dice.raw" }
 SfxShuffle = sound{ "sounds/shuffle.raw" }
 SfxCardMatch = sound{"sounds/coinCollect_aud.wav"}
 SfxGameStart = sound{ "sounds/success.raw" }
+SfxGameWin = sound{ "sounds/clapping.raw"}
 
 BGGreen = image{"bg0.PNG", quality = 9.99}
 BGBlue = image{"background/blue.PNG", quality = 9.99}

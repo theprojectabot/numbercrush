@@ -138,7 +138,7 @@ private:
 			str << "score: " << counters[id].score << "\n";
 
         //vid[cube].bg0_rom.text(vec(2,2), Font3, str, '!');
-       vid[cube].bg1.text(vec(2,2),Font, str);
+       vid[cube].bg1.text(vec(4,2),Font, str);
        // vid.sprites[0].setImage(CardOne, frame);
 	}
 
@@ -203,7 +203,7 @@ private:
 		CubeID cube(id);
 		/////*
                 //playSfx(SfxBomb);
-	 ///*
+	 /*
 		LOG("Touch event on cube #%d, state=%d\n", id, cube.isTouching());
 		//counters[id].touchOccured = true;
 
@@ -218,13 +218,13 @@ private:
                     RestartGame();
                 }
 
-             //   /*
+                /*
 		//displayNumber(id);
 
                 //str << "touch: " << cube.isTouching() << "\n";
                 changeCard(id);
 		displayScore(id);
-               // */
+                */
                // 
 		
 	
@@ -348,7 +348,7 @@ private:
         mask = mask | BG1Mask::filled(vec(2,2), vec(12,12));
         vid[id].bg1.erase(TTile);
         gameOver = true;
-        playSfx(SfxSuccess);
+        playSfx(SfxGameWin);
 
          for (int count = 0; count < CUBE_ALLOCATION; count++)
          {
