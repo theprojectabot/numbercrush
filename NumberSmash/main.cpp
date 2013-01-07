@@ -2,7 +2,8 @@
 #include "assets.gen.h"
 
 #define MINNUMBER 0
-#define MAXNUMBER 9
+#define MAXNUMBER 10
+#define GAMEWINSCORE 10
 
 using namespace Sifteo;
 
@@ -18,8 +19,10 @@ static AssetSlot MainSlot = AssetSlot::allocate()
 static VideoBuffer vid[CUBE_ALLOCATION];
 static TiltShakeRecognizer motion[CUBE_ALLOCATION];
 
-AssetImage Backgrounds[6] = {
-    BGGreen, BGBlue, BGRed, BGPink, BGLightBlue, BGPurple
+
+
+AssetImage Backgrounds[8] = {
+    BGGreen, BGBlue, BGRed, BGPink, BGLightBlue, BGYellow, BGPurple, BGOrange
 };
  
 class NumberSmash {
@@ -34,6 +37,7 @@ public:
 
      int frame;
      int counterColorSwitch;
+     bool gameOver;
      
     void setup()
     {
@@ -44,6 +48,7 @@ public:
         Events::cubeConnect.set(&NumberSmash::onConnect, this);
 
         counterColorSwitch = 0;
+        gameOver = false;
         // Handle already-connected cubes
         for (CubeID cube : CubeSet::connected())
             onConnect(cube);
@@ -60,9 +65,19 @@ public:
        
     }
     
+    void drawBombExplosion(unsigned id)
+    {
+        CubeID cube(id);
+        vid[cube].bg1.image(vec(4,4), BombAnim, counters[id].currentNumber);
+    
+    
+    }
+    
     void switchColorBack()
         {
-           vid[0].bg0.image(vec(0,0), Backgrounds[0]);   
+        
+           if(!gameOver)     
+                vid[0].bg0.image(vec(0,0), Backgrounds[0]);   
            counterColorSwitch = 0;
         }
 
@@ -72,16 +87,18 @@ private:
 	void playSfx(const AssetAudio& sfx) {
 		static int i=0;
 		AudioChannel(i).play(sfx);
-		i = 1 - i;
+		i++;
+                if(i >= 7)
+                    i = 0;
 	}
-
+        
     void onConnect(unsigned id)
     {
         CubeID cube(id);
 
         bzero(counters[id]);
         LOG("Piece %d connected\n", id);
-        
+        counters[id].score = 0;
        // vid[id].initMode(BG0_ROM);
         vid[id].initMode(BG0_BG1);
         vid[id].attach(id);
@@ -137,11 +154,19 @@ private:
         
         void changeCard(unsigned id)
         {
-                //counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
-                counters[id].currentNumber =counters[0].currentNumber;
-		displayNumber(id);
+            counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
+             
+            if(id == 0 && counters[id].currentNumber == 10 )
+            {
+                 counters[id].currentNumber = 0;
+            }
+                
+                //Cheat to allow cards to match host
+                //counters[id].currentNumber =counters[0].currentNumber;
+		
+               // displayNumber(id);
 
-        //str << "touch: " << cube.isTouching() << "\n";
+                //str << "touch: " << cube.isTouching() << "\n";
                 drawCard(id);
 		displayScore(id);
             
@@ -150,12 +175,24 @@ private:
         void switchColorFast(unsigned id)
         {
             
-            vid[0].bg0.image(vec(0,0), Backgrounds[id]);
+            if(!gameOver)
+                 vid[0].bg0.image(vec(0,0), Backgrounds[id]);
             
             counterColorSwitch = 15;
            
 
         }
+        
+        void RestartGame()
+        {
+            
+        counterColorSwitch = 0;
+        gameOver = false;
+        // Handle already-connected cubes
+        for (CubeID cube : CubeSet::connected())
+            onConnect(cube);
+        }
+        
         
         
         
@@ -164,10 +201,9 @@ private:
 	void onTouch(unsigned id)
     {
 		CubeID cube(id);
-		///*
+		/////*
                 //playSfx(SfxBomb);
-	
-
+	 ///*
 		LOG("Touch event on cube #%d, state=%d\n", id, cube.isTouching());
 		//counters[id].touchOccured = true;
 
@@ -176,16 +212,20 @@ private:
                     counters[id].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
                   //  counters[id].touchOccured = false;
                 }
-			
+		//*/	
+                if(gameOver && id == 0)          
+                {
+                    RestartGame();
+                }
 
-
-
+             //   /*
 		//displayNumber(id);
 
                 //str << "touch: " << cube.isTouching() << "\n";
                 changeCard(id);
 		displayScore(id);
-
+               // */
+               // 
 		
 	
     }
@@ -227,11 +267,7 @@ private:
 		counters[0].neighborAdd--;
     }
 
-	void newRound()
-	{
-		counters[0].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
-		displayNumber(0);
-	}
+
 
     void onNeighborAdd(unsigned firstID, unsigned firstSide, unsigned secondID, unsigned secondSide)
     {
@@ -247,9 +283,18 @@ private:
         //LOG("Neighbor Add: %02x:%d - %02x:%d\n", firstID, firstSide, secondID, secondSide);
 		LOG("Player %d checking in with number %d - Center has number %d\n", player, counters[player].currentNumber, counters[0].currentNumber);
 
+                if(counters[player].currentNumber == 10)
+                {
+                    Bomb();
+                }
+                
 		if(counters[player].currentNumber == counters[0].currentNumber) {
 			LOG("Player %d just scored\n", player);
 			counters[player].score++;
+                        
+                        if(counters[player].score >= GAMEWINSCORE)
+                            Win(player);
+                        
                         playSfx(SfxCardMatch);
 
 			newRound();
@@ -272,7 +317,62 @@ private:
 		counters[0].neighborAdd++;
     }
     
+    	void newRound()
+	{
+                counters[0].currentNumber = random.randint(MINNUMBER, MAXNUMBER);
+                if(counters[0].currentNumber == 10)
+                    counters[0].currentNumber = 0;
+                
+                displayNumber(0);
+               
+	}
+        
+        void Bomb()
+        {
+            playSfx(SfxBomb);
+           //Iterate through all cubes and change number
+            for(int counter = 0; counter < CUBE_ALLOCATION; counter++ )
+            {
+              changeCard(counter);
+                
+            }
+            
+            
+        }
     
+    void Win(unsigned id)
+    {
+        //Player id win
+        
+        auto mask = BG1Mask::filled(vec(2,2), vec(12,12));
+        mask = mask | BG1Mask::filled(vec(2,2), vec(12,12));
+        vid[id].bg1.erase(TTile);
+        gameOver = true;
+        playSfx(SfxSuccess);
+
+         for (int count = 0; count < CUBE_ALLOCATION; count++)
+         {
+             auto mask = BG1Mask::filled(vec(2,2), vec(12,12));
+             mask = mask | BG1Mask::filled(vec(2,2), vec(12,12));
+             vid[count].bg1.erase(TTile);
+             
+            
+             if(count == 0 )
+             {
+                 vid[count].bg0.image(vec(0,0), Splash);  
+             }else if(count == id ){
+                 vid[count].bg0.image(vec(0,0), WinBackground); 
+                 
+               }else
+               {
+                 vid[count].bg0.image(vec(0,0), LoseBackground); 
+               }
+              
+               
+         }
+         
+        
+    }
     
 };
 

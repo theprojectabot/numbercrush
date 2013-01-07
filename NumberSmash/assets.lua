@@ -5,13 +5,18 @@ Icon = image{"splash.png"}
 
 GameAssets = group{}
 Background = image{"bg0.PNG", quality = 9.99}
+WinBackground = image{"background/win.PNG", quality = 9.99}
+LoseBackground = image{"background/lose.PNG", quality = 9.99}
+Splash = image{"splashBIG.PNG", quality= 9.99}
+
 TTile = image{"transparent_tile.png", pinned=true, quality = 10}
 --Font = image{"font-8x16.png", pinned=true, width=8, height=16}
 Font = image{"font-8x16c.png", pinned=true, width=8, height=16}
-CardOne = image{"card1.PNG",pinned=true, width=128,height=128}
-Font2 = image{"CharcolTest.png",pinned=true, width=16, height=16}
-Font3 = image{"arieltest.png", pinned=true, width=16, height =32}
-Card = image{"cards/out.png", pinned=true, width=64, height = 64}
+
+
+Card = image{"cards/out_with_bomb.png", pinned=true, width=64, height = 64}
+BombAnim = image{"bombCard/outBomb.png", pinned=true, width =64, height = 64}
+
 
 SfxBomb = sound{ "sounds/bomb.raw" }
 SfxCountdown = sound{ "sounds/bomb.raw" }
@@ -29,3 +34,5 @@ BGLightBlue = image{"background/lightBlue.PNG", quality = 9.99}
 BGPink = image{"background/pink.PNG", quality = 9.99}
 BGPurple = image{"background/purple.PNG", quality = 9.99}
 BGRed = image{"background/red.PNG", quality = 9.99}
+BGYellow = image{"background/yellow.PNG", quality = 9.99}
+BGOrange = image{"background/orange.PNG", quality = 9.99}
