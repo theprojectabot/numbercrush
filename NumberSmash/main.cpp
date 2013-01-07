@@ -136,10 +136,11 @@ private:
 		
 		if(id != 0)
 			str << "score: " << counters[id].score << "\n";
-
-        //vid[cube].bg0_rom.text(vec(2,2), Font3, str, '!');
-       vid[cube].bg1.text(vec(4,2),Font, str);
-       // vid.sprites[0].setImage(CardOne, frame);
+                else
+                    str << "       " << "\n";
+                //vid[cube].bg0_rom.text(vec(2,2), Font3, str, '!');
+                vid[cube].bg1.text(vec(4,2),Font, str);
+                // vid.sprites[0].setImage(CardOne, frame);
 	}
 
 	void displayNumber(unsigned id)
@@ -149,7 +150,7 @@ private:
 		str << "number: " << counters[id].currentNumber << "\n";
                 frame = counters[id].currentNumber;
                 vid[cube].bg1.text(vec(2,12), Font, str);
-                drawCard(id);
+               // drawCard(id);
 	}
         
         void changeCard(unsigned id)
@@ -323,7 +324,8 @@ private:
                 if(counters[0].currentNumber == 10)
                     counters[0].currentNumber = 0;
                 
-                displayNumber(0);
+                drawCard(0);
+                //displayNumber(0);
                
 	}
         

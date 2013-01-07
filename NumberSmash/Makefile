@@ -6,8 +6,7 @@ STIR = $(SDK_DIR)/bin/stir
 LD = $(SDK_DIR)/bin/slinky
 CC = $(SDK_DIR)/bin/arm-clang
 
-BIN = /Users/benb/Desktop/$(APP).elf
-
+BIN = /Users/benb/Desktop/numbercrush/NumberSmash/$(APP).elf
 include $(SDK_DIR)/Makefile.defs
 
 OBJS = $(ASSETS).gen.o main.o
